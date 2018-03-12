@@ -1,8 +1,8 @@
 
-let DATE_TIME = '30';
+const DATE_TIME = '30';
 
 
-let addInvetory = (args, respond) => {
+const addInventory = (args, respond) => {
     console.log(args);
     respond(null, {});
 }

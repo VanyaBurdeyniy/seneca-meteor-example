@@ -3,18 +3,18 @@
  UNPUBLISHED - ALL RIGHTS RESERVED
  
 */
-let senecaWeb = require('seneca-web');
-let Express = require('express');
-let Router = Express.Router;
-let context = new Router();
+const senecaWeb = require('seneca-web');
+const Express = require('express');
+const Router = Express.Router;
+const context = new Router();
 
-let senecaWebConfig = {
+const senecaWebConfig = {
     context: context,
     adapter: require('seneca-web-adapter-express'),
     options: { parseBody: false }
 }
 
-let app = Express();
+const app = Express();
 app.use(require('body-parser').json());
 app.use(context);
 app.listen(8080, function () {
@@ -22,11 +22,11 @@ app.listen(8080, function () {
 });
 
 
-let seneca = require('seneca')()
+const seneca = require('seneca')()
     .use(senecaWeb, senecaWebConfig)
     .use('./actions');
 
 seneca.act({role:'inventory', cmd:'find_item', id:'a3e42'}, (err, item) => {
-    if (err) return err;    
+    if (err) {return err;}    
     console.log(item);
 });

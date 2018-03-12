@@ -1,0 +1,39 @@
+{
+    "extends": [
+        "eslint:recommended",
+        "prettier"
+    ],
+    "env": {
+        "node": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 7,
+        "sourceType": "module"
+    },
+    "rules": {
+        "getter-return": 1,
+        "no-console": 1,
+        "no-extra-boolean-cast": 1,
+        "no-template-curly-in-string": 2,
+        "valid-jsdoc": 1,
+        "consistent-return": 1,
+        "curly": 1,
+        "default-case": 1,
+        "dot-location": [
+            2,
+            "property"
+        ],
+        "guard-for-in": 1,
+        "no-alert": 1,
+        "no-caller": 2,
+        "no-empty-function": 1,
+        "no-eq-null": 2,
+        "no-floating-decimal": 1,
+        "no-implicit-globals": 2,
+        "no-implied-eval": 2,
+        "no-invalid-this": 1,
+
+        "no-var": 1,
+        "no-unused-vars": 1
+    }
+}
