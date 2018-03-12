@@ -9,6 +9,9 @@ const bodyParser = require('body-parser');
 const { Router } = express;
 const context = new Router();
 
+const config = require('./config');
+const PORT = config.get('PORT');
+
 const senecaWebConfig = {
     context,
     adapter: require('seneca-web-adapter-express'),
@@ -18,8 +21,8 @@ const senecaWebConfig = {
 const app = express();
 app.use(bodyParser.json());
 app.use(context);
-app.listen(8080, () => {
-    console.log('Server listening on port 3000');
+app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
 });
 
 
