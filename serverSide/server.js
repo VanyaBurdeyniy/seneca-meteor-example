@@ -3,26 +3,28 @@
  UNPUBLISHED - ALL RIGHTS RESERVED
  
 */
-let senecaWeb = require('seneca-web');
-let Express = require('express');
-let Router = Express.Router;
-let context = new Router();
+'use strict';
 
-let senecaWebConfig = {
-    context: context,
+const senecaWeb = require('seneca-web');
+const Express = require('express');
+const Router = Express.Router;
+const context = new Router();
+
+const senecaWebConfig = {
+    context,
     adapter: require('seneca-web-adapter-express'),
-    options: { parseBody: false }
-}
+    options: {parseBody: false}
+};
 
-let app = Express();
+const app = Express();
 app.use(require('body-parser').json());
 app.use(context);
-app.listen(8080, function () {
+app.listen(8080, () => {
     console.log("Server listening on port 3000");
 });
 
 
-let seneca = require('seneca')()
+const seneca = require('seneca')()
     .use(senecaWeb, senecaWebConfig)
     .use('./actions');
 
