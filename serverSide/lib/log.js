@@ -2,7 +2,7 @@
 
 const Winston = require('winston');
 
-const logger = function() {
+const logger = () => {
 
     const transports = [
 
@@ -26,6 +26,6 @@ const logger = function() {
 
 };
 
-module.exports = function(module) {
+module.exports = module => {
     return logger(module.filename);
 };
