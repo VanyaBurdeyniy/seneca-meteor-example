@@ -1,12 +1,13 @@
 
-let DATE_TIME = '30';
+'use strict';
 
+const DATE_TIME = '30';
 
-let addInvetory = (args, respond) => {
+const addInventory = (args, respond) => {
     console.log(args);
     respond(null, {});
 }
 
-
-
-exports.add = addInventory;
+module.exports = {
+    add: addInventory
+};
