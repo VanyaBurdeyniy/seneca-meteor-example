@@ -3,62 +3,48 @@
  UNPUBLISHED - ALL RIGHTS RESERVED
 */
 
-const senecaWeb = require('seneca-web');
-const express = require('express');
+const context = require('express')();
 const bodyParser = require('body-parser');
-const { Router } = express;
-const context = new Router();
+const seneca = require('seneca');
+const senecaWeb = require('seneca-web');
+const logger = require('seneca-legacy-logger');
+const adapter = require('seneca-web-adapter-express');
 
 const config = require('./config');
 const PORT = config.get('PORT');
 
+const routes = [
+    {
+        prefix: '/',
+        pin: 'role:user,cmd:*',
+        map: {
+            userGet: {
+                GET: true,
+                alias: '/user',
+            },
+            userIdGet: {
+                GET: true,
+                alias: '/user/:userId',
+            },
+        },
+    },
+];
+
 const senecaWebConfig = {
     context,
-    adapter: require('seneca-web-adapter-express'),
-    options: { parseBody: false },
+    routes,
+    adapter,
 };
 
-const app = express();
-app.use(bodyParser.json());
-
-app.use(context);
-
-app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
-});
-
-// User router
-context.all('/user(/:userId)?(/:action)?(/:parameter)?', (req, res) => {
-    const {
-        query,
-        body,
-        headers,
-        path,
-        params,
-        method,
-    } = req;
-
-    const payloads = {
-        query,
-        body,
-        headers,
-        params,
-        path,
-        method,
-    };
-
-    // TODO: get a role from an auth module if there would be a need
-    seneca.act({ cmd: 'user', payloads }, (error, data) => {
-        if (error) {
-            return res
-                .status(error.output.statusCode)
-                .json(error.output.payload);
-        }
-
-        return res.json(data);
-    });
-});
-
-const seneca = require('seneca')()
+const _seneca = seneca({ internal: { logger } })
     .use(senecaWeb, senecaWebConfig)
-    .use('./actions');
+    .use('actions')
+    .ready(() => {
+        const server = _seneca.export('web/context')();
+
+        server.use(bodyParser.json());
+
+        server.listen(PORT, () => {
+            console.log(`Server listening on port ${PORT}`);
+        });
+    });

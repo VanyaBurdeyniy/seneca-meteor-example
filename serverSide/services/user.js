@@ -1,47 +1,47 @@
 const boom = require('boom');
 
-class User {
-    static mainService ({ method }, respond) {
-        switch (method) {
-        case 'GET':
-            return respond(null, { success: true });
-        case 'POST':
-            return respond(boom.badRequest('Parameters are invorect'));
-        default:
-            return respond(
-                boom.methodNotAllowed(`The method ${method} is not allowed`)
-            );
-        }
+// In-memoty user storage
+const users = [
+    {
+        id: 1,
+        login: 'john',
+        email: 'test@mail.com',
+    },
+    {
+        id: 2,
+        login: 'Viliam',
+        email: 'test2@mail.com',
+    },
+];
+
+/**
+ * Get all users from the db (in-memory)
+ * @param {Object} msg - contains all data from request (including request as request$) 
+ * @param {Callback} respond - callback
+ */
+exports.get = ({ args }, respond) => respond({ success: true, users });
+
+/**
+ * Get data by userId
+ * @param {Object} msg - contains all data from request (including request as request$) 
+ * @param {Callback} respond - callback
+ */
+exports.getById = ({ args }, respond) => {
+    const { params: { userId:_userId } } = args;
+
+    const userId = Number.parseInt(_userId, 10);
+    if (!userId || isNaN(userId)) {
+        return respond(boom.badRequest('UserId is invalid').output.payload);
     }
 
-    static idService (args, respond) {
-        return respond(null, { success: true });
+    const user = users.find(({ id }) => id === userId);
+
+    if (!user) {
+        return respond(boom.badRequest('User with userId was not found').output.payload);
     }
 
-    static actionService (args, respond) {
-        return respond(null, { success: true });
-    }
-
-    static parameterService (args, respond) {
-        return respond(null, { success: true });
-    }
-}
-
-// User factory
-module.exports = (args, respond) => {
-    const { payloads: { params } } = args;
-
-    if (params.parameter) {
-        return User.parameterService(args.payloads, respond);
-    }
-
-    if (params.action) {
-        return User.actionService(args.payloads, respond);
-    }
-
-    if (params.userId) {
-        return User.idService(args.payloads, respond);
-    }
-
-    return User.mainService(args.payloads, respond);
+    return respond({
+        user,
+        success: true,
+    });
 };

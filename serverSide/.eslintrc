@@ -180,7 +180,7 @@
             "as-needed"
         ],
         "max-len": [
-            2,
+            1,
             {
                 "code": 80,
                 "tabWidth": 4
