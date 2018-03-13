@@ -13,6 +13,8 @@ const adapter = require('seneca-web-adapter-express');
 const config = require('./config');
 const PORT = config.get('PORT');
 
+context.use(bodyParser.json());
+
 const routes = [
     {
         prefix: '/',
@@ -26,6 +28,10 @@ const routes = [
                 GET: true,
                 alias: '/user/:userId',
             },
+            userIdPost: {
+                POST: true,
+                alias: '/user/:userId',
+            },
         },
     },
 ];
@@ -34,6 +40,7 @@ const senecaWebConfig = {
     context,
     routes,
     adapter,
+    options: {parseBody: false}
 };
 
 const _seneca = seneca({ internal: { logger } })
@@ -41,8 +48,6 @@ const _seneca = seneca({ internal: { logger } })
     .use('actions')
     .ready(() => {
         const server = _seneca.export('web/context')();
-
-        server.use(bodyParser.json());
 
         server.listen(PORT, () => {
             console.log(`Server listening on port ${PORT}`);

@@ -1,7 +1,19 @@
+const wrapper = require('./utils/wrapSenecaAction');
+
 const inventory = require('./services/inventory');
 const user = require('./services/user');
 
-module.exports = function actions (options) {
-    this.add({ role: 'user', cmd: 'userGet' }, user.get);
+const _actions = [
+    {
+        action: { role: 'user', cmd: 'userGet' },
+        cb: user.get
+    }
+];
+
+module.exports = function actions(options) {
+
+    _actions.forEach(action => wrapper(this, action));
+
+    this.add({ role: 'user', cmd: 'userIdPost' }, user.postById);
     this.add({ role: 'user', cmd: 'userIdGet' }, user.getById);
 };
