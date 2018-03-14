@@ -4,19 +4,22 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node server.js",
     "test": "node_modules/.bin/mocha test/unit/**/**.spec.js --exit",
     "lint": "eslint --fix --ext .js ."
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.18.2",
+    "boom": "^7.2.0",
     "express": "^4.16.2",
     "nconf": "^0.10.0",
     "seneca": "^3.4.3",
+    "seneca-legacy-logger": "^0.1.2",
     "seneca-web": "^2.2.0",
     "seneca-web-adapter-express": "^1.1.1",
-    "winston": "^3.0.0-rc2",
-    "body-parser": "^1.18.2"
+    "winston": "^3.0.0-rc2"
   },
   "devDependencies": {
     "chai": "^4.1.2",

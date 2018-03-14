@@ -1,31 +1,20 @@
-'use strict';
+const winston = require('winston');
+const config = require('../config');
 
-const Winston = require('winston');
+const logger = winston.createLogger({
+    transports: [
 
-const logger = () => {
-
-    const transports = [
-
-        new Winston.transports.Console({
+        new winston.transports.Console({
             timestamp: true,
             colorize: true,
-            level: 'error'
+            level: 'error',
         }),
 
-        new Winston.transports.File({
-            filename: global.config.get('log:path'),
-            level: 'debug'
-        })
+        new winston.transports.File({
+            filename: config.get('log:path'),
+            level: 'debug',
+        }),
+    ],
+});
 
-    ];
-
-    return new Winston.Logger({
-        transports
-    });
-
-
-};
-
-module.exports = module => {
-    return logger(module.filename);
-};
+module.exports = logger;

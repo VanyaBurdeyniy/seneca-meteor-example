@@ -3,37 +3,69 @@
  UNPUBLISHED - ALL RIGHTS RESERVED
 */
 
-const senecaWeb = require('seneca-web');
-const express = require('express');
+const context = require('express')();
 const bodyParser = require('body-parser');
-const { Router } = express;
-const context = new Router();
+const seneca = require('seneca');
+const senecaWeb = require('seneca-web');
+const logger = require('seneca-legacy-logger');
+const adapter = require('seneca-web-adapter-express');
+const log = require('./lib/log');
+
+const config = require('./config');
+const PORT = config.get('PORT');
+
+
+context.use(bodyParser.json());
+
+log.info('ololo');
+
+const routes = [
+    {
+        prefix: '/user',
+        pin: 'role:user,cmd:*',
+        map: {
+            getAll: {
+                GET: true,
+                name: ''
+            },
+            getById: {
+                GET: true,
+                name: '',
+                suffix: '/:userId',
+            },
+            create: {
+                POST: true,
+                name: '',
+                suffix: '/:userId',
+            }
+        },
+    },
+    {
+        prefix: '/admin',
+        pin: 'role:admin,cmd:*',
+        map: {
+            login: {
+                POST: true,
+                name: ''
+            },
+        },
+    },
+];
 
 const senecaWebConfig = {
     context,
-    adapter: require('seneca-web-adapter-express'),
-    options: { parseBody: false },
+    routes,
+    adapter,
+    options: { parseBody: false }
 };
 
-const app = express();
-app.use(bodyParser.json());
-app.use(context);
-app.listen(8080, () => {
-    console.log('Server listening on port 3000');
-});
-
-
-const seneca = require('seneca')()
+const _seneca = seneca({ internal: { logger } })
     .use(senecaWeb, senecaWebConfig)
-    .use('./actions');
+    .use('actions')
+    .ready(() => {
+        const server = _seneca.export('web/context')();
 
-seneca.act({
-    role: 'inventory',
-    cmd: 'find_item',
-    id: 'a3e42',
-}, (err, item) => {
-    if (err) {
-        return err;
-    }
-    console.log(item);
-});
+        server.listen(PORT, () => {
+            console.log(`Server listening on port ${PORT}`);
+        });
+    });
