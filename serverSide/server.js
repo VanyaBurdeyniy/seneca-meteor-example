@@ -9,11 +9,15 @@ const seneca = require('seneca');
 const senecaWeb = require('seneca-web');
 const logger = require('seneca-legacy-logger');
 const adapter = require('seneca-web-adapter-express');
+const log = require('./lib/log');
 
 const config = require('./config');
 const PORT = config.get('PORT');
 
+
 context.use(bodyParser.json());
+
+log.info('ololo');
 
 const routes = [
     {
