@@ -14,6 +14,7 @@ const users = [
     },
 ];
 
+
 /**
  * Get all users from the db (in-memory)
  * @param {Object} data - contains all data from request (including request as request$) 

@@ -1,6 +1,5 @@
-'use strict';
-
 const Winston = require('winston');
+const config = require('../config');
 
 const logger = () => {
     const transports = [
@@ -12,7 +11,7 @@ const logger = () => {
         }),
 
         new Winston.transports.File({
-            filename: global.config.get('log:path'),
+            filename: config.get('log:path'),
             level: 'debug',
         }),
 

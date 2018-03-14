@@ -24,12 +24,12 @@ const routes = [
                 GET: true,
                 alias: '/user',
             },
-            userIdGet: {
-                GET: true,
-                alias: '/user/:userId',
-            },
             userIdPost: {
                 POST: true,
+                alias: '/user/:userId',
+            },
+            userIdGet: {
+                GET: true,
                 alias: '/user/:userId',
             },
         },

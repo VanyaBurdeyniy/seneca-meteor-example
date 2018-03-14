@@ -1,4 +1,5 @@
 const boom = require('boom');
+const log = require('../lib/log');
 
 module.exports = (self, { action, cb }) => {
     self.add(action, (msg, callback) => {
@@ -16,7 +17,7 @@ class Handler {
     }
 
     setHeaders(headers) {
-        if (typeof headers !== 'object' || Array.isArray(headers)) {
+        if (!headers || typeof headers !== 'object' || Array.isArray(headers)) {
             throw new Error('Headers must be an object type');
         }
 
@@ -49,11 +50,12 @@ async function wrapCallback(userFunc, args, response$) {
             return error.output.payload;
         }
 
+        // log.info(error.mesage);
         response$.status(500);
         return {
             "statusCode": 500,
             "error": "Internal Server Error",
-            "message": "An internal server error occurred"
+            "message": error.message
         }
     }
 }
