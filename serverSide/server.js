@@ -17,8 +17,6 @@ const PORT = config.get('PORT');
 
 context.use(bodyParser.json());
 
-log.info('ololo');
-
 const routes = [
     {
         prefix: '/user',
@@ -26,7 +24,7 @@ const routes = [
         map: {
             getAll: {
                 GET: true,
-                name: ''
+                name: '',
             },
             getById: {
                 GET: true,
@@ -37,7 +35,7 @@ const routes = [
                 POST: true,
                 name: '',
                 suffix: '/:userId',
-            }
+            },
         },
     },
     {
@@ -46,7 +44,7 @@ const routes = [
         map: {
             login: {
                 POST: true,
-                name: ''
+                name: '',
             },
         },
     },
@@ -56,7 +54,7 @@ const senecaWebConfig = {
     context,
     routes,
     adapter,
-    options: { parseBody: false }
+    options: { parseBody: false },
 };
 
 const _seneca = seneca({ internal: { logger } })
@@ -66,6 +64,6 @@ const _seneca = seneca({ internal: { logger } })
         const server = _seneca.export('web/context')();
 
         server.listen(PORT, () => {
-            console.log(`Server listening on port ${PORT}`);
+            log.info(`Server listening on port ${PORT}`);
         });
     });
