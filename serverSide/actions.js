@@ -1,6 +1,5 @@
 const wrapper = require('./utils/wrapSenecaAction');
 
-const inventory = require('./services/inventory');
 const user = require('./services/user');
 
 const _actions = [
