@@ -18,8 +18,13 @@ const users = [
  * Get all users from the db (in-memory)
  * @param {Object} data - contains all data from request (including request as request$) 
  */
-exports.get = (data) => {
+exports.get = (data, h) => {
     console.log(data)
+
+    h.setHeaders({
+        'content-type':'application/json',
+        'asdf':'asfsad'
+    });
     
     throw data.boom.badRequest('some message')
     return { success: true, users };

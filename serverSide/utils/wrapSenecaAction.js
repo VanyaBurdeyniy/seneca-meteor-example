@@ -8,7 +8,29 @@ module.exports = (self, { action, cb }) => {
         }, msg.response$)
             .then(callback, callback);
     });
-};
+}
+
+class Handler {
+    constructor(response) {
+        this.response = response;
+    }
+
+    setHeaders(headers) {
+        if (typeof headers !== 'object' || Array.isArray(headers)) {
+            throw new Error('Headers must be an object type');
+        }
+
+        Object.keys(headers)
+            .forEach(header => this.response.set(header, headers[header].toString()));
+
+        return this;
+    }
+
+    statusCode(code) {
+        this.response.status(code);
+        return this;
+    }
+}
 
 /**
  * The wrapper function for user's callback
@@ -19,7 +41,7 @@ module.exports = (self, { action, cb }) => {
  */
 async function wrapCallback(userFunc, args, response$) {
     try {
-        const data = await userFunc(args);
+        const data = await userFunc(args, new Handler(response$));
         return data;
     } catch (error) {
         if (boom.isBoom(error)) {
@@ -34,5 +56,4 @@ async function wrapCallback(userFunc, args, response$) {
             "message": "An internal server error occurred"
         }
     }
-
 }
