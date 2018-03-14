@@ -22,10 +22,15 @@ const _actions = {
             action: 'login',
             h: (a, r) => r({}),
         },
-    ]
+    ],
 };
 
-module.exports = function actions(options) {
+/**
+ * Handle all actions
+ * @param {Object} [options] - some options from middleware
+ * @returns {Object} done
+ */
+module.exports = function actions () {
     // Leave options for now
 
     wrapper(this, _actions);

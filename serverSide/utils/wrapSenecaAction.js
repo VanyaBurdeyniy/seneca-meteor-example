@@ -1,5 +1,14 @@
 const boom = require('boom');
-const log = require('../lib/log');
+
+/**
+ * @typedef RequestObject 
+ * @type {Object} data - Contain all data from response
+ * @property  {Object} headers - request headers
+ * @property  {Object} body - request body
+ * @property  {Object} query - request query
+ * @property  {Object} params - request params
+ */
+
 
 module.exports = function (self, actions) {
     Object.entries(actions)
@@ -24,27 +33,49 @@ module.exports = function (self, actions) {
                     });
             });
         });
-}
+};
 
 /**
- * @class Handler - handle soem optional functionality
+ * @typedef Response - response object from express
+ * @type {Object}
+ * @method status - set status code
+ * @method set - set one header
+ */
+
+/**
+  * @typedef Handler - an instance of Handler class
+  * @type {Object}
+  * @method setHeaders - set headers to response
+  * @method setStatusCode  - set statusCode to response
+  */
+
+/**
+ * Handle some optional functionality
  */
 class Handler {
-    constructor(response) {
+    /**
+     * Create a new instance of Handler
+     * @param {Response} response - response object from express
+     */
+    constructor (response) {
         this.response = response;
     }
 
     /** 
      * Set additional headers to response
-     * @param {Object} headers 
+     * @param {Object} headers - header object wchich contain header for response
+     * @returns {Handler} - the reference
      */
-    setHeaders(headers) {
+    setHeaders (headers) {
         if (!headers || typeof headers !== 'object' || Array.isArray(headers)) {
             throw new Error('Headers must be an object type');
         }
 
         Object.keys(headers)
-            .forEach(header => this.response.set(header, headers[header].toString()));
+            .forEach((header) => {
+                this.response
+                    .set(header, headers[header].toString());
+            });
 
         return this;
     }
@@ -52,8 +83,9 @@ class Handler {
     /**
      * Set the status code to response
      * @param {Number} statusCode - http status code
+     * @returns {Handler} - the reference
      */
-    setStatusCode(statusCodecode) {
+    setStatusCode (statusCode) {
         if (!statusCode || typeof statusCode !== 'number') {
             throw new Error('statusCode must be a number type');
         }
@@ -68,9 +100,9 @@ class Handler {
  * @param {Function} userFunc  - the callback for user
  * @param {Object} args - related arguments 
  * @param {Response} response$ - response object from express
- * @returns {Primise.<Object>}
+ * @returns {Primise.<Object>} - the object for response.json
  */
-async function wrapCallback(userFunc, args, response$) {
+async function wrapCallback (userFunc, args, response$) {
     try {
         const data = await userFunc(args, new Handler(response$));
         return data;
@@ -80,13 +112,12 @@ async function wrapCallback(userFunc, args, response$) {
             return error.output.payload;
         }
 
-        // log.info(error.mesage);
         const statusCode = error.statusCode || 500;
         response$.status(statusCode);
         return {
-            "statusCode": 500,
-            "error": "Internal Server Error",
-            "message": error.message
-        }
+            statusCode: 500,
+            error: 'Internal Server Error',
+            message: error.message,
+        };
     }
 }
