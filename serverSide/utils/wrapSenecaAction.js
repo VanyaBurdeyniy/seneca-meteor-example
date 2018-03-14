@@ -1,21 +1,43 @@
 const boom = require('boom');
 const log = require('../lib/log');
 
-module.exports = (self, { action, cb }) => {
-    self.add(action, (msg, callback) => {
-        wrapCallback(cb, {
-            ...msg.args,
-            boom,
-        }, msg.response$)
-            .then(callback, callback);
-    });
+module.exports = function (self, actions) {
+    Object.entries(actions)
+        .forEach(([role, handlers]) => {
+            handlers.forEach(({ action: cmd, h }) => {
+                self.add(
+                    { role, cmd },
+                    (
+                        {
+                            request$,
+                            response$,
+                            args,
+                        },
+                        callback
+                    ) => {
+                        wrapCallback(h, {
+                            ...args,
+                            headers: request$.headers,
+                            boom,
+                        }, response$)
+                            .then(callback, callback);
+                    });
+            });
+        });
 }
 
+/**
+ * @class Handler - handle soem optional functionality
+ */
 class Handler {
     constructor(response) {
         this.response = response;
     }
 
+    /** 
+     * Set additional headers to response
+     * @param {Object} headers 
+     */
     setHeaders(headers) {
         if (!headers || typeof headers !== 'object' || Array.isArray(headers)) {
             throw new Error('Headers must be an object type');
@@ -27,8 +49,16 @@ class Handler {
         return this;
     }
 
-    statusCode(code) {
-        this.response.status(code);
+    /**
+     * Set the status code to response
+     * @param {Number} statusCode - http status code
+     */
+    setStatusCode(statusCodecode) {
+        if (!statusCode || typeof statusCode !== 'number') {
+            throw new Error('statusCode must be a number type');
+        }
+
+        this.response.status(statusCode);
         return this;
     }
 }
@@ -51,7 +81,8 @@ async function wrapCallback(userFunc, args, response$) {
         }
 
         // log.info(error.mesage);
-        response$.status(500);
+        const statusCode = error.statusCode || 500;
+        response$.status(statusCode);
         return {
             "statusCode": 500,
             "error": "Internal Server Error",

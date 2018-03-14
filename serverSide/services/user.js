@@ -17,73 +17,74 @@ const users = [
 
 /**
  * Get all users from the db (in-memory)
- * @param {Object} data - contains all data from request (including request as request$) 
+ * @param {Callback} h - optional parameter for adding some additional info
+ * @return {Object} - response
+ * @throws {Error|Boom}
  */
-exports.get = (data, h) => {
+exports.getAll = (data, h) => {
     console.log(data)
 
     h.setHeaders({
-        'content-type':'application/json',
-        'asdf':'asfsad'
+        'content-type': 'application/json',
+        'asdf': 'asfsad'
     });
-    
-    throw data.boom.badRequest('some message')
+
     return { success: true, users };
 }
 
 
 /**
  * Get data by userId
- * @param {Object} msg - contains all data from request (including request as request$) 
- * @param {Callback} respond - callback
+ * @param {Callback} h - optional parameter for adding some additional info
+ * @return {Object} - response
+ * @throws {Error|Boom}
  */
-exports.getById = ({ args, response$ }, respond) => {
-    const { params: { userId:_userId } } = args;
+exports.getById = (data, h) => {
+    const { params: { userId: _userId } } = data;
     const userId = Number.parseInt(_userId, 10);
     if (!userId || isNaN(userId)) {
-        const error = boom.badRequest('UserId is invalid').output;
-        response$.status(error.statusCode)
-        return respond(error.payload);
+        throw boom.badRequest('UserId is invalid');
     }
 
     const user = users.find(({ id }) => id === userId);
 
     if (!user) {
-        return respond(boom.badRequest('User with userId was not found').output.payload);
+        throw boom.badRequest('User with userId was not found');
     }
 
-    return respond({
+    return {
         user,
         success: true,
-    });
+    };
 };
 
 
 /**
  * Create new user and add it ot the users (in-memory db)
- * @param {Object} msg - contains all data from request (including request as request$) 
- * @param {Callback} respond - callback
+ * @param {Callback} h - optional parameter for adding some additional info
+ * @return {Object} - response
+ * @throws {Error|Boom}
  */
-exports.postById = ({ args }, respond) => {
-    const { params: { userId:_userId }, body } = args;
+exports.postById = (data, h) => {
+    const { params: { userId: _userId }, body } = data;
 
     console.log(body)
     const userId = Number.parseInt(_userId, 10);
     if (!userId || isNaN(userId)) {
-        return respond(boom.badRequest('UserId is invalid').output.payload,);
+        throw boom.badRequest('UserId is invalid');
     }
 
     const user = users.find(({ id }) => id === userId);
 
     if (user) {
-        return respond(boom.badRequest('User is already exist').output.payload);
+        throw boom.badRequest('User is already exist');
     }
 
     // TODO: validate body
 
-    users.push({...body, id: userId});
+    users.push({ ...body, id: userId });
 
-    return respond({
+    return {
         success: true,
-    });
+    };
 };

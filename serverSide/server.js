@@ -17,20 +17,32 @@ context.use(bodyParser.json());
 
 const routes = [
     {
-        prefix: '/',
+        prefix: '/user',
         pin: 'role:user,cmd:*',
         map: {
-            userGet: {
+            getAll: {
                 GET: true,
-                alias: '/user',
+                name: ''
             },
-            userIdPost: {
+            getById: {
+                GET: true,
+                name: '',
+                suffix: '/:userId',
+            },
+            create: {
                 POST: true,
-                alias: '/user/:userId',
-            },
-            userIdGet: {
-                GET: true,
-                alias: '/user/:userId',
+                name: '',
+                suffix: '/:userId',
+            }
+        },
+    },
+    {
+        prefix: '/admin',
+        pin: 'role:admin,cmd:*',
+        map: {
+            login: {
+                POST: true,
+                name: ''
             },
         },
     },
@@ -40,7 +52,7 @@ const senecaWebConfig = {
     context,
     routes,
     adapter,
-    options: {parseBody: false}
+    options: { parseBody: false }
 };
 
 const _seneca = seneca({ internal: { logger } })
