@@ -12,9 +12,9 @@ const seneca = require('seneca');
 const senecaWeb = require('seneca-web');
 const logger = require('seneca-legacy-logger');
 const adapter = require('seneca-web-adapter-express');
-const log = require('./services/log');
+const log = require('./lib/services/log');
 
-const config = require('../config');
+const config = require('./config');
 const PORT = config.get('PORT');
 
 context.use(bodyParser.json());
@@ -65,7 +65,7 @@ const senecaWebConfig = {
 
 const _seneca = seneca({ internal: { logger } })
     .use(senecaWeb, senecaWebConfig)
-    .use('actions.js')
+    .use('lib/actions.js')
     .ready(() => {
         const server = _seneca.export('web/context')();
 
