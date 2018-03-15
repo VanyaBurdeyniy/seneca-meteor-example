@@ -43,7 +43,7 @@ module.exports = function (self, actions) {
  */
 
 /**
-  * @typedef Handler - an instance of Handler class
+  * @typedef HandleResponse - an instance of Handler class
   * @type {Object}
   * @method setHeaders - set headers to response
   * @method setStatusCode  - set statusCode to response
@@ -52,7 +52,7 @@ module.exports = function (self, actions) {
 /**
  * Handle some optional functionality
  */
-class Handler {
+class HandleResponse {
     /**
      * Create a new instance of Handler
      * @param {Response} response - response object from express
@@ -64,7 +64,7 @@ class Handler {
     /** 
      * Set additional headers to response
      * @param {Object} headers - header object wchich contain header for response
-     * @returns {Handler} - the reference
+     * @returns {HandleResponse} - the reference
      */
     setHeaders (headers) {
         if (!headers || typeof headers !== 'object' || Array.isArray(headers)) {
@@ -83,7 +83,7 @@ class Handler {
     /**
      * Set the status code to response
      * @param {Number} statusCode - http status code
-     * @returns {Handler} - the reference
+     * @returns {HandleResponse} - the reference
      */
     setStatusCode (statusCode) {
         if (!statusCode || typeof statusCode !== 'number') {
@@ -104,7 +104,7 @@ class Handler {
  */
 async function wrapCallback (userFunc, args, response$) {
     try {
-        const data = await userFunc(args, new Handler(response$));
+        const data = await userFunc(args, new HandleResponse(response$));
         return data;
     } catch (error) {
         if (boom.isBoom(error)) {

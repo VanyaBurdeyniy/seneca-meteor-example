@@ -1,7 +1,15 @@
+/**
+ * @module utils
+ */
 const wrapper = require('./utils/wrapSenecaAction');
 
-const user = require('./services/user');
+const user = require('./actions/user');
 
+/**
+ * @constant actions
+ * @type {Object} Contain an each action with an action type and handler
+ * @param {Object} actionName : {Array}
+ */
 const _actions = {
     user: [
         {
@@ -27,8 +35,9 @@ const _actions = {
 
 /**
  * Handle all actions
- * @param {Object} [options] - some options from middleware
- * @returns {Object} done
+ * @param {Object} [options] - Options which are received from middleware
+ * @param {Function} [done] - Callback function
+ * @returns {Object} Return the result of <strong>done(error [, data])</strong>
  */
 module.exports = function actions () {
     // Leave options for now

@@ -20,7 +20,7 @@ const users = [
 /**
  * Get all users from the db (in-memory)
  * @param {RequestObject} data - Contain all data from response
- * @param {Handler} [h] - optional parameter for adding some additional info
+ * @param {HandleResponse} [h] - optional parameter for adding some additional info
  * @return {Object} - response
  * @throws {Error|Boom}
  */
@@ -28,7 +28,7 @@ exports.getAll = (data, h) => {
     h.setHeaders({
         'content-type': 'application/json',
         asdf: 'asfsad',
-    });
+    })
 
     return { success: true, users };
 };
@@ -37,7 +37,7 @@ exports.getAll = (data, h) => {
 /**
  * Get data by userId
  * @param {RequestObject} data - Contain all data from response
- * @param {Handler} [h] - optional parameter for adding some additional info
+ * @param {HandleResponse} [h] - optional parameter for adding some additional info
  * @return {Object} - response
  * @throws {Error|Boom}
  */
@@ -64,7 +64,7 @@ exports.getById = (data) => {
 /**
  * Create new user and add it ot the users (in-memory db)
  * @param {RequestObject} data - Contain all data from response
- * @param {Handler} [h] - optional parameter for adding some additional info
+ * @param {HandleResponse} [h] - optional parameter for adding some additional info
  * @return {Object} - response
  * @throws {Error|Boom}
  */

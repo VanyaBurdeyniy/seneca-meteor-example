@@ -1,5 +1,5 @@
 const winston = require('winston');
-const config = require('../config');
+const config = require('../../config');
 
 const logger = winston.createLogger({
     transports: [
@@ -17,8 +17,4 @@ const logger = winston.createLogger({
     ],
 });
 
-<<<<<<< HEAD
 module.exports = logger;
-=======
-module.exports = logger;
->>>>>>> dev
