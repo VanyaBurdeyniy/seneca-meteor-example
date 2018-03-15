@@ -1,14 +1,42 @@
 /**
- * @module utils
+ * @fileOverview The main file of actions. It aggregates all actions togather with
+ * different roles, wraps them and create seneca actions.
+ * @module actions
+ * @version 1.0.0
+ * @license 
+ * COPYRIGHT 2017, 2018 SPIRENT COMMUNICATIONS OF 
+ * ROCKVILLE, INC. UNPUBLISHED - ALL RIGHTS RESERVED
  */
-const wrapper = require('./utils/wrapSenecaAction');
+const wrapper = require('./utils/wrapActions');
 
 const user = require('./actions/user');
 
 /**
- * @constant actions
- * @type {Object} Contain an each action with an action type and handler
- * @param {Object} actionName : {Array}
+ * @typedef Action
+ * @desc The key of Object must be the role name
+ * @type {Object}
+ * @property {Array} actionHandlers - There are {@link ActionHandler}s for making
+ * a call of seneca-web routes
+ */
+
+/**
+  * @typedef ActionHandler
+  * @type {Object}
+  * @property {String} action - The name of action from seneca-web routing
+  * @property {Function} h - The handler function from {@link actions} 
+  */
+
+/**
+ * @typedef _actionsAggregator
+ * @type {Object}
+ * @desc Contains an each action including an action type and handler
+ * @property {Action} actionsByRole {@link Action}s which are owned by roles
+ */
+
+/**
+ * @constant _actions
+ * @type {_actionsAggregator} 
+ * @private
  */
 const _actions = {
     user: [
@@ -34,12 +62,11 @@ const _actions = {
 };
 
 /**
- * Handle all actions
+ * @desc Handle all actions
  * @param {Object} [options] - Options which are received from middleware
- * @param {Function} [done] - Callback function
- * @returns {Object} Return the result of <strong>done(error [, data])</strong>
+ * @returns {void}
  */
-module.exports = function actions () {
+module.exports = function actions() {
     // Leave options for now
 
     wrapper(this, _actions);
