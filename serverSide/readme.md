@@ -15,10 +15,18 @@ npm start
 ``` javascript
 {
     "server": {
-       "port": 4000,
+        "port": 3000
     },
     "log": {
-        "path": "./log.txt"
+        "path": "./logs/log.txt"
     }
 }
+```
+
+## API Documentation
+
+You can generate the docs by running
+
+``` bash
+npm run docs
 ```

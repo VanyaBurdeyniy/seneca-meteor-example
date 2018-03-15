@@ -1,31 +1,29 @@
 const winston = require('winston');
-const config = require('../../config');
 
+const logger = (logPath) => {
+    const { dirname } = require('path');
+    const { existsSync, mkdirSync } = require('fs');
 
-const logPath = config.get('log:path');
+    if (!existsSync(dirname(logPath))) {
+        // Create the directory if it does not exist
+        mkdirSync(dirname(logPath));
+    };
 
-const { dirname } = require('path');
-const { existsSync, mkdirSync } = require('fs');
+    return winston.createLogger({
+        transports: [
 
-if (!existsSync(dirname(logPath))) {
-    // Create the directory if it does not exist
-    mkdirSync(dirname(logPath));
-}
+            new winston.transports.Console({
+                timestamp: true,
+                colorize: true,
+                level: 'error',
+            }),
 
-const logger = winston.createLogger({
-    transports: [
-
-        new winston.transports.Console({
-            timestamp: true,
-            colorize: true,
-            level: 'error',
-        }),
-
-        new winston.transports.File({
-            filename: logPath,
-            level: 'debug',
-        }),
-    ],
-});
+            new winston.transports.File({
+                filename: logPath,
+                level: 'debug',
+            }),
+        ],
+    });
+};
 
 module.exports = logger;
