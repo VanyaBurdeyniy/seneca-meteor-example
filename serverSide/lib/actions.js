@@ -18,7 +18,7 @@ const _actions = {
         },
         {
             action: 'getById',
-            h: user.get,
+            h: user.getById,
         },
         {
             action: 'create',

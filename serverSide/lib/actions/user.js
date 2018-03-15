@@ -28,7 +28,7 @@ exports.getAll = (data, h) => {
     h.setHeaders({
         'content-type': 'application/json',
         asdf: 'asfsad',
-    })
+    });
 
     return { success: true, users };
 };
@@ -68,7 +68,7 @@ exports.getById = (data) => {
  * @return {Object} - response
  * @throws {Error|Boom}
  */
-exports.postById = (data) => {
+exports.create = (data) => {
     const { params: { userId: _userId }, body } = data;
 
     const userId = Number.parseInt(_userId, 10);
