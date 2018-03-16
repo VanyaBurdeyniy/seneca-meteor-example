@@ -57,29 +57,29 @@ class Application {
     }
 
     /**
-     * Runs new server
+     * Runs new application instance
      * @returns {Promise} When server created
      */
-    async run() {
-        /**
-         * @constant _seneca
-         * @type {Object}
-         * @desc The instance of seneca module which provide all seneca sollutions 
-         * for use
-         * @property {Function} use - Allows to add plugins
-         * @property {Function} ready - Allows to run provided function for run it 
-         * after all plugins were added
-         */
-        return await new Promise((resolve) => {
-            const _seneca = seneca({ internal: { logger } })
-                .use(senecaWeb, this._senecaWebConfig);
+    run() {
+        return new Promise((resolve) => {
+           /**
+             * @constant _seneca
+             * @type {Object}
+             * @desc The instance of seneca module which provide all seneca sollutions 
+             * for use
+             * @property {Function} use - Allows to add plugins
+             * @property {Function} ready - Allows to run provided function for run it 
+             * after all plugins were added
+             */
+            const _seneca = seneca({ internal: { logger } });
 
             _seneca
+                .use(senecaWeb, this._senecaWebConfig)
                 .use(wrapActions.bind(_seneca), actions)
                 .ready(() => {
-                    const server = _seneca.export('web/context')();
-
-                    server.listen(this.port, () => resolve(this));
+                    _seneca
+                        .export('web/context')()
+                        .listen(this.port, () => resolve(this));
                 });
         });
     }
