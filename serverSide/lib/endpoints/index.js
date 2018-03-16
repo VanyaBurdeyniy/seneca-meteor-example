@@ -1,3 +1,13 @@
+/**
+ * @fileOverview The main file of endpoints. It aggregates all endpoints togather with
+ * different roles, wraps them and create seneca endpoints.
+ * @module endpoints
+ * @version 1.0.0
+ * @license 
+ * COPYRIGHT 2017, 2018 SPIRENT COMMUNICATIONS OF 
+ * ROCKVILLE, INC. UNPUBLISHED - ALL RIGHTS RESERVED
+ */
+
 const user = require('../actions/user');
 
 exports.routes = [
@@ -33,6 +43,33 @@ exports.routes = [
     },
 ];
 
+/**
+ * @typedef Action
+ * @desc The key of Object must be the role name
+ * @type {Object}
+ * @property {Array} actionHandlers - There are {@link ActionHandlers} for making
+ * a call of seneca-web routes
+ */
+
+/**
+  * @typedef ActionHandler
+  * @type {Object}
+  * @property {String} action - The name of action from seneca-web routing
+  * @property {Function} h - The handler function from {@link actions} 
+  */
+
+/**
+ * @typedef _actionsAggregator
+ * @type {Object}
+ * @desc Contains an each action including an action type and handler
+ * @property {Action} actionsByRole {@link Actions} which are owned by roles
+ */
+
+/**
+ * @constant _actions
+ * @type {_actionsAggregator} 
+ * @private
+ */
 exports.actions = {
     user: [
         {
@@ -54,4 +91,4 @@ exports.actions = {
             h: (a, r) => r({}),
         },
     ],
-}
+};

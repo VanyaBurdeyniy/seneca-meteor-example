@@ -44,7 +44,6 @@
         "no-whitespace-before-property": 2,
         "newline-per-chained-call": 2,
         "eol-last": 2,
-        "space-before-function-paren": 2,
         "no-template-curly-in-string": 2,
         "no-param-reassign": 2,
         "prefer-spread": 2,
@@ -80,6 +79,14 @@
         "nonblock-statement-body-position": 2,
         "space-in-parens": 2,
         "array-bracket-spacing": 2,
+        "space-before-function-paren": [
+            2,
+            {
+                "anonymous": "always",
+                "named": "never",
+                "asyncArrow": "always"
+            }
+        ],
         "spaced-comment": [
             2,
             "always",
@@ -89,7 +96,9 @@
                         "-"
                     ]
                 },
-                "markers": ["/"]
+                "markers": [
+                    "/"
+                ]
             }
         ],
         "one-var": [

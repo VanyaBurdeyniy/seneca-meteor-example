@@ -1,15 +1,29 @@
+/**
+ * @fileOverview Wrapper for seneca actions
+ * @module utils/wrapActions
+ */
+/// <reference path="../actions.js" />
+
 const boom = require('boom');
 
 /**
  * @typedef RequestObject 
- * @type {Object} data - Contain all data from response
+ * @type {Object} 
+ * @desc Contain all data from response
  * @property  {Object} headers - request headers
  * @property  {Object} body - request body
  * @property  {Object} query - request query
  * @property  {Object} params - request params
  */
 
-
+/**
+ * @desc Wrapper per each action:
+ * <br>- gets a role, command and actionHandler
+ * <br>- creates seneca action with the above role and command
+ * <br>- wraps actionHandler in purpose to use ES6 and some ES7 standards
+ * @param {ActionObject} actions  {@link Actions} 
+ * @return {void}
+ */
 module.exports = function (actions) {
     Object.entries(actions)
         .forEach(([role, handlers]) => {
@@ -38,42 +52,57 @@ module.exports = function (actions) {
 /**
  * @typedef Response - response object from express
  * @type {Object}
- * @method status - set status code
+ * @desc Response object from express
+ * @method status 
  * @method set - set one header
+ *
+ * @typedef HandleResponse
+ * @type {Object}
+ * @desc An instance of Handler class
+ * @method setHeaders
+ * @method setStatusCode
+ * 
+ * @typedef SenecaObject
+ * @type {Object}
+ * @desc A refference to seneca instance
+ * @method add
+ * @method act
  */
 
 /**
-  * @typedef HandleResponse - an instance of Handler class
-  * @type {Object}
-  * @method setHeaders - set headers to response
-  * @method setStatusCode  - set statusCode to response
-  */
-
-/**
- * Handle some optional functionality
+ * @classDesc Handle some optional functionality. It is a wrapper for the 
+ * express response object
+ * @class
  */
 class HandleResponse {
-    /**
-     * Create a new instance of Handler
-     * @param {Response} response - response object from express
+    /** 
+     * @type {Response}
+     * @desc Holds response object
+     * @private 
+     * @see Response
      */
-    constructor (response) {
-        this.response = response;
+
+    /**
+     * @param {Response} response - Response object from express
+     */
+    constructor(response) {
+        this._response = response;
     }
 
     /** 
-     * Set additional headers to response
+     * @desc Set additional headers to response
+     * @public
      * @param {Object} headers - header object wchich contain header for response
      * @returns {HandleResponse} - the reference
      */
-    setHeaders (headers) {
+    setHeaders(headers) {
         if (!headers || typeof headers !== 'object' || Array.isArray(headers)) {
             throw new Error('Headers must be an object type');
         }
 
         Object.keys(headers)
             .forEach((header) => {
-                this.response
+                this._response
                     .set(header, headers[header].toString());
             });
 
@@ -81,28 +110,29 @@ class HandleResponse {
     }
 
     /**
-     * Set the status code to response
+     * @desc Set the status code to response
+     * @public
      * @param {Number} statusCode - http status code
      * @returns {HandleResponse} - the reference
      */
-    setStatusCode (statusCode) {
+    setStatusCode(statusCode) {
         if (!statusCode || typeof statusCode !== 'number') {
             throw new Error('statusCode must be a number type');
         }
 
-        this.response.status(statusCode);
+        this._response.status(statusCode);
         return this;
     }
 }
 
 /**
- * The wrapper function for user's callback
+ * @desc The wrapper function for user's callback
  * @param {Function} userFunc  - the callback for user
  * @param {Object} args - related arguments 
  * @param {Response} response$ - response object from express
  * @returns {Primise.<Object>} - the object for response.json
  */
-async function wrapCallback (userFunc, args, response$) {
+async function wrapCallback(userFunc, args, response$) {
     try {
         const data = await userFunc(args, new HandleResponse(response$));
         return data;

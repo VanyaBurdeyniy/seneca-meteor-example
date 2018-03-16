@@ -7,6 +7,6 @@ const application = new Application(config);
 
 application.run()
     .then(application => log.info(`Server listening on port ${application.port}`))
-    .catch((message) => log.error(message));
+    .catch(message => log.error(message));
 
-process.on('uncaughtException', (message) => log.error(message));
+process.on('uncaughtException', message => log.error(message));
