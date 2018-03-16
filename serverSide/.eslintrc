@@ -7,8 +7,11 @@
         "node": true
     },
     "parserOptions": {
-        "ecmaVersion": 7,
-        "sourceType": "module"
+        "ecmaVersion": 2017,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "experimentalObjectRestSpread": true
+        }
     },
     "rules": {
         "no-empty-function": 1,
@@ -38,7 +41,6 @@
         "no-whitespace-before-property": 2,
         "newline-per-chained-call": 2,
         "eol-last": 2,
-        "space-before-function-paren": 2,
         "no-template-curly-in-string": 2,
         "no-param-reassign": 2,
         "prefer-spread": 2,
@@ -72,9 +74,30 @@
         "brace-style": 2,
         "no-else-return": 2,
         "nonblock-statement-body-position": 2,
-        "spaced-comment": 2,
         "space-in-parens": 2,
         "array-bracket-spacing": 2,
+        "space-before-function-paren": [
+            2,
+            {
+                "anonymous": "always",
+                "named": "never",
+                "asyncArrow": "always"
+            }
+        ],
+        "spaced-comment": [
+            2,
+            "always",
+            {
+                "block": {
+                    "exceptions": [
+                        "-"
+                    ]
+                },
+                "markers": [
+                    "/"
+                ]
+            }
+        ],
         "one-var": [
             2,
             "never"
@@ -180,9 +203,9 @@
             "as-needed"
         ],
         "max-len": [
-            2,
+            1,
             {
-                "code": 80,
+                "code": 90,
                 "tabWidth": 4
             }
         ]

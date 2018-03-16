@@ -1,10 +1,15 @@
-'use strict';
-
 const nconf = require('nconf');
-const path = require('path');
+const { join } = require('path');
 
 nconf.argv()
     .env()
-    .file({file: path.join(__dirname, 'config.json')});
+    .defaults({
+        server: {
+            port: 3000,
+        },
+    })
+    .file({
+        file: join(__dirname, 'config.json'),
+    });
 
 module.exports = nconf;
