@@ -13,7 +13,8 @@ const senecaWeb = require('seneca-web');
 const logger = require('seneca-legacy-logger');
 const adapter = require('seneca-web-adapter-express');
 
-const routes = require('./routes/routes');
+const wrapSenecaAction = require('./utils/wrapSenecaAction');
+const { routes, actions } = require('./endpoints');
 
 /**
  * Server
@@ -34,34 +35,33 @@ class Server {
          * @type {Array} contain an each route logic for seneca-web
          */
         this.senecaWebConfig = {
-            routes,
             adapter,
+            routes,
             context: this.context,
             options: { parseBody: false },
         };
+
 
         this.port = config.get('server:port');
     }
 
     /**
-     * Configure new server
+     * Runs new server
      * @returns {Promise} When server created
      */
-    async configure () {
-        await new Promise ((resolve) => {
-            this._seneca = seneca({ internal: { logger } })
-                .use(senecaWeb, this.senecaWebConfig)
-                .use('./actions.js')
-                .ready(() => {
-                    const server = this._seneca.export('web/context')();
+    async run () {
+        return await new Promise((resolve) => {
+            const _seneca = seneca({ internal: { logger } })
+                .use(senecaWeb, this.senecaWebConfig);
 
-                    server.listen(this.port, () => {
-                        global.log.info(`Server listening on port ${this.port}`);
-                        resolve(this);
-                    });
+            _seneca
+                .use(wrapSenecaAction.bind(_seneca), actions)
+                .ready(() => {
+                    const server = _seneca.export('web/context')();
+
+                    server.listen(this.port, () => resolve(this));
                 });
         });
-        
     }
 }
 

@@ -13,6 +13,9 @@
             "experimentalObjectRestSpread": true
         }
     },
+    "globals": {
+        "log": true
+    },
     "rules": {
         "no-empty-function": 1,
         "no-invalid-this": 1,

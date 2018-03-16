@@ -10,11 +10,11 @@ const boom = require('boom');
  */
 
 
-module.exports = function (self, actions) {
+module.exports = function (actions) {
     Object.entries(actions)
         .forEach(([role, handlers]) => {
             handlers.forEach(({ action: cmd, h }) => {
-                self.add(
+                this.add(
                     { role, cmd },
                     (
                         {

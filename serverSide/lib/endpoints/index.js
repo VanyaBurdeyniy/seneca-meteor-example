@@ -1,4 +1,6 @@
-const routes = [
+const user = require('../actions/user');
+
+exports.routes = [
     {
         prefix: '/user',
         pin: 'role:user,cmd:*',
@@ -31,4 +33,25 @@ const routes = [
     },
 ];
 
-module.exports = routes;
+exports.actions = {
+    user: [
+        {
+            action: 'getAll',
+            h: user.getAll,
+        },
+        {
+            action: 'getById',
+            h: user.getById,
+        },
+        {
+            action: 'create',
+            h: user.create,
+        },
+    ],
+    admin: [
+        {
+            action: 'login',
+            h: (a, r) => r({}),
+        },
+    ],
+}
