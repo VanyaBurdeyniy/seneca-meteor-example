@@ -1,10 +1,6 @@
 /**
  * @fileOverview Wrapper for seneca actions
  * @module utils/wrapActions
- * @version 1.0.0
- * @license 
- * COPYRIGHT 2017, 2018 SPIRENT COMMUNICATIONS OF 
- * ROCKVILLE, INC. UNPUBLISHED - ALL RIGHTS RESERVED
  */
 /// <reference path="../actions.js" />
 

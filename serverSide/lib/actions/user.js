@@ -1,10 +1,6 @@
 /**
  * @fileOverview All actions which relys on role 'user'
  * @module actions/user
- * @version 1.0.0
- * @license 
- * COPYRIGHT 2017, 2018 SPIRENT COMMUNICATIONS OF 
- * ROCKVILLE, INC. UNPUBLISHED - ALL RIGHTS RESERVED
  */
 /// <reference path="../utils/wrapActions.js" />
 
