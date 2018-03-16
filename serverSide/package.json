@@ -2,12 +2,12 @@
   "name": "simple-api",
   "version": "1.0.0",
   "description": "",
-  "main": "lib/server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node lib/server.js",
+    "start": "node index.js",
     "test": "node_modules/.bin/mocha test/unit/**/**.spec.js --exit",
     "lint": "eslint --fix --ext .js .",
-    "doc": "jsdoc --configure .jsdocrc"
+    "docs": "jsdoc --configure .jsdocrc"
   },
   "author": "",
   "license": "ISC",

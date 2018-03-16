@@ -6,70 +6,66 @@
  * @module Server
  */
 
-const context = require('express')();
+const express = require('express');
 const bodyParser = require('body-parser');
 const seneca = require('seneca');
 const senecaWeb = require('seneca-web');
 const logger = require('seneca-legacy-logger');
 const adapter = require('seneca-web-adapter-express');
-const log = require('./services/log');
 
-const config = require('../config');
-const PORT = config.get('PORT');
-
-context.use(bodyParser.json());
+const routes = require('./routes/routes');
 
 /**
- * @constant routes
- * @type {Array} contain an each route logic for seneca-web
+ * Server
  */
-const routes = [
-    {
-        prefix: '/user',
-        pin: 'role:user,cmd:*',
-        map: {
-            getAll: {
-                GET: true,
-                name: '',
-            },
-            getById: {
-                GET: true,
-                name: '',
-                suffix: '/:userId',
-            },
-            create: {
-                POST: true,
-                name: '',
-                suffix: '/:userId',
-            },
-        },
-    },
-    {
-        prefix: '/admin',
-        pin: 'role:admin,cmd:*',
-        map: {
-            login: {
-                POST: true,
-                name: '',
-            },
-        },
-    },
-];
+class Server {
+    /**
+     * Creates Server instance
+     * @param {config} config - put there specified config file
+     */
+    constructor (config) {
+        this.config = config;
 
-const senecaWebConfig = {
-    context,
-    routes,
-    adapter,
-    options: { parseBody: false },
-};
+        this.context = express();
+        this.context.use(bodyParser.json());
 
-const _seneca = seneca({ internal: { logger } })
-    .use(senecaWeb, senecaWebConfig)
-    .use('actions.js')
-    .ready(() => {
-        const server = _seneca.export('web/context')();
+        /**
+         * @constant routes
+         * @type {Array} contain an each route logic for seneca-web
+         */
+        this.senecaWebConfig = {
+            routes,
+            adapter,
+            context: this.context,
+            options: { parseBody: false },
+        };
 
-        server.listen(PORT, () => {
-            log.info(`Server listening on port ${PORT}`);
+        this.port = config.get('server:port');
+    }
+
+    /**
+     * Configure new server
+     * @returns {Promise} When server created
+     */
+    async configure () {
+        await new Promise ((resolve) => {
+            this._seneca = seneca({ internal: { logger } })
+                .use(senecaWeb, this.senecaWebConfig)
+                .use('./actions.js')
+                .ready(() => {
+                    const server = this._seneca.export('web/context')();
+
+                    server.listen(this.port, () => {
+                        global.log.info(`Server listening on port ${this.port}`);
+                        resolve(this);
+                    });
+                });
         });
-    });
+        
+    }
+}
+
+module.exports = Server;
+
+
+
