@@ -6,7 +6,7 @@
  * @module Server
  */
 
-const Express = require('express');
+const express = require('express');
 const bodyParser = require('body-parser');
 const seneca = require('seneca');
 const senecaWeb = require('seneca-web');
@@ -26,7 +26,7 @@ class Server {
     constructor (config) {
         this.config = config;
 
-        this.context = Express();
+        this.context = express();
         this.context.use(bodyParser.json());
 
         /**
@@ -44,7 +44,7 @@ class Server {
     }
 
     /**
-     * configure new server
+     * Configure new server
      * @returns {Promise} When server created
      */
     async configure () {
