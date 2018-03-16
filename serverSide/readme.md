@@ -30,3 +30,6 @@ You can generate the docs by running
 ``` bash
 npm run docs
 ```
+
+### Licence
+COPYRIGHT 2017, 2018 SPIRENT COMMUNICATIONS OF ROCKVILLE, INC. UNPUBLISHED - ALL RIGHTS RESERVED

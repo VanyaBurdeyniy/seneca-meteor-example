@@ -1,9 +1,6 @@
-/*
- COPYRIGHT 2017, 2018 SPIRENT COMMUNICATIONS OF ROCKVILLE, INC.
- UNPUBLISHED - ALL RIGHTS RESERVED
-*/
 /**
- * @module Server
+ * @fileOverview The entry point of the application.
+ * @module server
  */
 
 const express = require('express');
@@ -13,59 +10,82 @@ const senecaWeb = require('seneca-web');
 const logger = require('seneca-legacy-logger');
 const adapter = require('seneca-web-adapter-express');
 
+/**
+ * @constant routes
+ * @type {Array} 
+ * @desc Contain an each route logic for seneca-web
+ * @private
+ */
 const routes = require('./routes/routes');
 
 /**
- * Server
+ * @classDesc The main enter point of application 
+ * express response object
+ * @class
  */
-class Server {
+class Application {
     /**
-     * Creates Server instance
-     * @param {config} config - put there specified config file
+     * @param {Object} config - put there specified config file
+     * @param {Function} config.get Get parameter from configurations
      */
-    constructor (config) {
-        this.config = config;
-
-        this.context = express();
-        this.context.use(bodyParser.json());
+    constructor(config) {
+        this._config = config;
 
         /**
-         * @constant routes
-         * @type {Array} contain an each route logic for seneca-web
+         * @const context
+         * @type {ExpressInstance}
+         * @private
          */
-        this.senecaWebConfig = {
+        const context = express();
+        context.use(bodyParser.json());
+
+        /**
+         * @const senecaWebConfig
+         * @type {Object}
+         * @desc Options for configurating seneca-web module
+         * @property {Express} context - The expless or express.Route instance
+         * @property {Array} routes - Configured {@link routes}
+         * @property {Function} adapter - Module seneca-web-adapter-express - which 
+         * provides some additional configurations for express (context)
+         * @property {Object} [options] - Additional options
+         * @property {Boolean} [options.parseBody=true] - Whether parse body on not
+         */
+        this._senecaWebConfig = {
             routes,
             adapter,
-            context: this.context,
+            context,
             options: { parseBody: false },
         };
 
-        this.port = config.get('server:port');
+        this._port = config.get('server:port');
     }
 
     /**
-     * Configure new server
+     * @desc Server configurations
      * @returns {Promise} When server created
      */
-    async configure () {
-        await new Promise ((resolve) => {
-            this._seneca = seneca({ internal: { logger } })
-                .use(senecaWeb, this.senecaWebConfig)
-                .use('./actions.js')
-                .ready(() => {
-                    const server = this._seneca.export('web/context')();
+    async configure() {
+        /**
+         * @constant _seneca
+         * @type {Object}
+         * @desc The instance of seneca module which provide all seneca sollutions 
+         * for use
+         * @property {Function} use - Allows to add plugins
+         * @property {Function} ready - Allows to run provided function for run it 
+         * after all plugins were added
+         */
+        const _seneca = seneca({ internal: { logger } })
+            .use(senecaWeb, this._senecaWebConfig)
+            .use('./actions.js')
+            .ready(() => {
+                const server = _seneca.export('web/context')();
 
-                    server.listen(this.port, () => {
-                        global.log.info(`Server listening on port ${this.port}`);
-                        resolve(this);
-                    });
+                server.listen(this._port, () => {
+                    global.log.info(`Server listening on port ${this.port}`);
                 });
-        });
-        
+            });
     }
 }
 
-module.exports = Server;
-
-
-
+exports.Application = Application;
+module.exports = Application;

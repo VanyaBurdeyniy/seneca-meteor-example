@@ -1,8 +1,16 @@
-/// <reference path="../utils/wrapSenecaAction.js" />
+/**
+ * @fileOverview All actions which relys on role 'user'
+ * @module actions/user
+ */
+/// <reference path="../utils/wrapActions.js" />
 
 const boom = require('boom');
 
-// In-memory user storage
+/**
+ * @constant users
+ * @desc In-memory user storage
+ * @private
+ */
 const users = [
     {
         id: 1,
@@ -18,7 +26,7 @@ const users = [
 
 
 /**
- * Get all users from the db (in-memory)
+ * @desc Get all users from the db (in-memory)
  * @param {RequestObject} data - Contain all data from response
  * @param {HandleResponse} [h] - optional parameter for adding some additional info
  * @return {Object} - response
@@ -35,7 +43,7 @@ exports.getAll = (data, h) => {
 
 
 /**
- * Get data by userId
+ * @desc Get user info by userId
  * @param {RequestObject} data - Contain all data from response
  * @param {HandleResponse} [h] - optional parameter for adding some additional info
  * @return {Object} - response
@@ -62,7 +70,7 @@ exports.getById = (data) => {
 
 
 /**
- * Create new user and add it ot the users (in-memory db)
+ * @desc Create a new user and add it to the users (in-memory db)
  * @param {RequestObject} data - Contain all data from response
  * @param {HandleResponse} [h] - optional parameter for adding some additional info
  * @return {Object} - response
