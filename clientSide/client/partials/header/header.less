@@ -1,0 +1,40 @@
+.header {
+    box-sizing: border-box;
+    display: flex;
+    width: 100%;
+    padding: 20px 20px;
+    background-color: #EEEEEE;
+    justify-content: space-between;
+    align-items: center;
+
+    &__logo {
+        font-size: 28px;
+    }
+
+    &__left-side, &__right-side {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    &__navbar {
+        padding: 0;
+        margin: 0;
+        display: inline-block;
+        margin-top: 5px;
+        margin-left: 30px;
+
+        &-item {
+            display: inline-block;
+            margin-left: 10px;
+            cursor: pointer;
+
+            &:first-of-type {
+                margin-left: 0;
+            }
+        }
+    }
+
+    &__user-name {
+        font-size: 20px;
+    }
+}
