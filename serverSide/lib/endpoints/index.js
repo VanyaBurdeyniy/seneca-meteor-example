@@ -3,12 +3,13 @@
  * different roles, wraps them and create seneca endpoints.
  * @module endpoints
  * @version 1.0.0
- * @license 
- * COPYRIGHT 2017, 2018 SPIRENT COMMUNICATIONS OF 
+ * @license
+ * COPYRIGHT 2017, 2018 SPIRENT COMMUNICATIONS OF
  * ROCKVILLE, INC. UNPUBLISHED - ALL RIGHTS RESERVED
  */
 
 const user = require('../actions/user');
+const statistic = require('../actions/statistic');
 
 exports.routes = [
     {
@@ -29,14 +30,19 @@ exports.routes = [
                 name: '',
                 suffix: '/:userId',
             },
+            delete: {
+                DELETE: true,
+                name: '',
+                suffix: '/:userId',
+            }
         },
     },
     {
-        prefix: '/admin',
-        pin: 'role:admin,cmd:*',
+        prefix: '/statistic',
+        pin: 'role:stat,cmd:*',
         map: {
-            login: {
-                POST: true,
+            get: {
+                GET: true,
                 name: '',
             },
         },
@@ -52,11 +58,11 @@ exports.routes = [
  */
 
 /**
-  * @typedef ActionHandler
-  * @type {Object}
-  * @property {String} action - The name of action from seneca-web routing
-  * @property {Function} h - The handler function from {@link actions} 
-  */
+ * @typedef ActionHandler
+ * @type {Object}
+ * @property {String} action - The name of action from seneca-web routing
+ * @property {Function} h - The handler function from {@link actions}
+ */
 
 /**
  * @typedef _actionsAggregator
@@ -67,7 +73,7 @@ exports.routes = [
 
 /**
  * @constant _actions
- * @type {_actionsAggregator} 
+ * @type {_actionsAggregator}
  * @private
  */
 exports.actions = {
@@ -84,11 +90,15 @@ exports.actions = {
             action: 'create',
             h: user.create,
         },
-    ],
-    admin: [
         {
-            action: 'login',
-            h: (a, r) => r({}),
+            action: 'delete',
+            h: user.delete,
+        },
+    ],
+    stat: [
+        {
+            action: 'get',
+            h: statistic.get,
         },
     ],
 };
