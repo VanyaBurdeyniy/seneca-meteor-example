@@ -1,5 +1,10 @@
 <template name="home">
-    <div class="container">
-        <h1>Welcome to Spirent!</h1>
+    <div class="container home">
+        <h1>Users:</h1>
+        <ul class="home__users-list">
+            {{#each users}}
+                <li class="home__users-list__item go-to-user">{{this.firstName}} {{this.lastName}}</li>
+            {{/each}}
+        </ul>
     </div>
 </template>
