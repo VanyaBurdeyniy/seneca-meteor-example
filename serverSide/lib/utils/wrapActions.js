@@ -14,8 +14,43 @@ const boom = require('boom');
  * @property  {Object} body - request body
  * @property  {Object} query - request query
  * @property  {Object} params - request params
- *
- * @typedef Response 
+ */
+
+/**
+ * @desc Wrapper per each action:
+ * <br>- gets a role, command and actionHandler
+ * <br>- creates seneca action with the above role and command
+ * <br>- wraps actionHandler in purpose to use ES6 and some ES7 standards
+ * @param {ActionObject} actions  {@link Actions} 
+ * @return {void}
+ */
+module.exports = function (actions) {
+    Object.entries(actions)
+        .forEach(([role, handlers]) => {
+            handlers.forEach(({ action: cmd, h }) => {
+                this.add(
+                    { role, cmd },
+                    (
+                        {
+                            request$,
+                            response$,
+                            args,
+                        },
+                        callback
+                    ) => {
+                        wrapCallback(h, {
+                            ...args,
+                            headers: request$.headers,
+                            boom,
+                        }, response$)
+                            .then(callback, callback);
+                    });
+            });
+        });
+};
+
+/**
+ * @typedef Response - response object from express
  * @type {Object}
  * @desc Response object from express
  * @method status 
@@ -116,37 +151,3 @@ async function wrapCallback(userFunc, args, response$) {
         };
     }
 }
-
-/**
- * @desc Wrapper per each action:
- * <br>- gets a role, command and actionHandler
- * <br>- creates seneca action with the above role and command
- * <br>- wraps actionHandler in purpose to use ES6 and some ES7 standards
- * @param {SenecaObject} senecaInstance  The refference to the seneca instance
- * @param {ActionObject} actions  {@link Actions} 
- * @return {void}
- */
-module.exports = function (senecaInstance, actions) {
-    Object.entries(actions)
-        .forEach(([role, handlers]) => {
-            handlers.forEach(({ action: cmd, h: actionHandler }) => {
-                senecaInstance.add(
-                    { role, cmd },
-                    (
-                        {
-                            request$,
-                            response$,
-                            args,
-                        },
-                        callback
-                    ) => {
-                        wrapCallback(actionHandler, {
-                            ...args,
-                            headers: request$.headers,
-                            boom,
-                        }, response$)
-                            .then(callback, callback);
-                    });
-            });
-        });
-};

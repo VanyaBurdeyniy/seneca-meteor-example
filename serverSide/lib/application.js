@@ -10,13 +10,8 @@ const senecaWeb = require('seneca-web');
 const logger = require('seneca-legacy-logger');
 const adapter = require('seneca-web-adapter-express');
 
-/**
- * @constant routes
- * @type {Array} 
- * @desc Contain an each route logic for seneca-web
- * @private
- */
-const routes = require('./routes/routes');
+const wrapActions = require('./utils/wrapActions');
+const { routes, actions } = require('./endpoints');
 
 /**
  * @classDesc The main enter point of application 
@@ -51,41 +46,44 @@ class Application {
          * @property {Boolean} [options.parseBody=true] - Whether parse body on not
          */
         this._senecaWebConfig = {
-            routes,
             adapter,
+            routes,
             context,
             options: { parseBody: false },
         };
 
-        this._port = config.get('server:port');
+
+        this.port = config.get('server:port');
     }
 
     /**
-     * @desc Server configurations
+     * Runs new application instance
      * @returns {Promise} When server created
      */
-    async configure() {
-        /**
-         * @constant _seneca
-         * @type {Object}
-         * @desc The instance of seneca module which provide all seneca sollutions 
-         * for use
-         * @property {Function} use - Allows to add plugins
-         * @property {Function} ready - Allows to run provided function for run it 
-         * after all plugins were added
-         */
-        const _seneca = seneca({ internal: { logger } })
-            .use(senecaWeb, this._senecaWebConfig)
-            .use('./actions.js')
-            .ready(() => {
-                const server = _seneca.export('web/context')();
+    run() {
+        return new Promise((resolve) => {
+           /**
+             * @constant _seneca
+             * @type {Object}
+             * @desc The instance of seneca module which provide all seneca sollutions 
+             * for use
+             * @property {Function} use - Allows to add plugins
+             * @property {Function} ready - Allows to run provided function for run it 
+             * after all plugins were added
+             */
+            const _seneca = seneca({ internal: { logger } });
 
-                server.listen(this._port, () => {
-                    global.log.info(`Server listening on port ${this.port}`);
+            _seneca
+                .use(senecaWeb, this._senecaWebConfig)
+                .use(wrapActions.bind(_seneca), actions)
+                .ready(() => {
+                    _seneca
+                        .export('web/context')()
+                        .listen(this.port, () => resolve(this));
                 });
-            });
+        });
     }
 }
 
-exports.Application = Application;
+
 module.exports = Application;

@@ -5,6 +5,7 @@
 /// <reference path="../utils/wrapActions.js" />
 
 const boom = require('boom');
+const statistic = require('./statistic');
 
 /**
  * @constant users
@@ -14,11 +15,17 @@ const boom = require('boom');
 const users = [
     {
         id: 1,
+        firstName: 'John',
+        lastName: 'Doe',
+        age: 23,
         login: 'john',
         email: 'test@mail.com',
     },
     {
         id: 2,
+        firstName: 'Evan',
+        lastName: 'Broom',
+        age: 18,
         login: 'Viliam',
         email: 'test2@mail.com',
     },
@@ -33,10 +40,7 @@ const users = [
  * @throws {Error|Boom}
  */
 exports.getAll = (data, h) => {
-    h.setHeaders({
-        'content-type': 'application/json',
-        asdf: 'asfsad',
-    });
+    statistic.set('Get users', true);
 
     return { success: true, users };
 };
@@ -49,19 +53,22 @@ exports.getAll = (data, h) => {
  * @return {Object} - response
  * @throws {Error|Boom}
  */
-exports.getById = (data) => {
+exports.getById = data => {
     const { params: { userId: _userId } } = data;
     const userId = Number.parseInt(_userId, 10);
     if (!userId || isNaN(userId)) {
+        statistic.set(`Get user by Id (${userId})`, false);
         throw boom.badRequest('UserId is invalid');
     }
 
     const user = users.find(({ id }) => id === userId);
 
     if (!user) {
+        statistic.set(`Get user by Id (${userId})`, false);
         throw boom.badRequest('User with userId was not found');
     }
 
+    statistic.set(`Get user by Id (${userId})`, true);
     return {
         user,
         success: true,
@@ -76,17 +83,19 @@ exports.getById = (data) => {
  * @return {Object} - response
  * @throws {Error|Boom}
  */
-exports.create = (data) => {
+exports.create = data => {
     const { params: { userId: _userId }, body } = data;
 
     const userId = Number.parseInt(_userId, 10);
     if (!userId || isNaN(userId)) {
+        statistic.set(`Create user by Id (${userId})`, false);
         throw boom.badRequest('UserId is invalid');
     }
 
     const user = users.find(({ id }) => id === userId);
 
     if (user) {
+        statistic.set(`Create user by Id (${userId})`, false);
         throw boom.badRequest('User is already exist');
     }
 
@@ -94,7 +103,37 @@ exports.create = (data) => {
 
     users.push({ ...body, id: userId });
 
+    statistic.set(`Create user by Id (${userId})`, true);
     return {
         success: true,
     };
+};
+
+exports.delete = data => {
+    const { params: { userId: _userId } } = data;
+
+    const userId = Number.parseInt(_userId, 10);
+    if (!userId || isNaN(userId)) {
+        statistic.set(`Delete user by Id (${userId})`, false);
+        throw boom.badRequest('UserId is invalid');
+    }
+
+    let index = null;
+    const user = users.find(({ id }, _index) => {
+        index = _index;
+        return id === userId;
+    });
+
+    if (!user) {
+        statistic.set(`Delete user by Id (${userId})`, false);
+        throw boom.badRequest('User with userId was not found');
+    }
+
+    users.splice(index, 1);
+
+    statistic.set(`Delete user by Id (${userId})`, true);
+    return {
+        success: true,
+    }
+
 };
