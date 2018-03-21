@@ -55,7 +55,7 @@ describe('Users', () => {
     });
 
     describe('/GET user/:id', () => {
-        it('should create one user by id and it should have all necessary keys', (done) => {
+        it('should create one user by id and it should have success status', (done) => {
             chai.request(`http://localhost:${port}`)
                 .post(`/user/${newUser}`)
                 .send({ login: 'johnnydepp', email: 'johny@de.pp' })

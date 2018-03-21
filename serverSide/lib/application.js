@@ -31,6 +31,13 @@ class Application {
          * @private
          */
         const context = express();
+
+        context.use((req, res, next) => {
+            res.header('Access-Control-Allow-Origin', config.get('server:access:origin'));
+            res.header('Access-Control-Allow-Methods', config.get('server:access:methods'));
+            res.header('Access-Control-Allow-Headers', config.get('server:access:headers'));
+            next();
+        });
         context.use(bodyParser.json());
 
         /**

@@ -16,6 +16,11 @@ npm start
 {
     "server": {
         "port": 3000
+        "access": {
+            "origin": "*",
+            "methods": "GET, POST, OPTIONS, PUT, PATCH, DELETE",
+            "headers": "Origin, X-Requested-With, Content-Type, Accept"
+        }
     },
     "log": {
         "path": "./logs/log.txt"
