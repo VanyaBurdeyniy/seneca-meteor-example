@@ -35,8 +35,8 @@ class Application {
 
         context.use((req, res, next) => {
             res.header('Access-Control-Allow-Origin', config.get('server:access:origin'));
-            res.header('Access-Control-Allow-Methods', 'server:access:methods');
-            res.header('Access-Control-Allow-Headers', 'server:access:headers');
+            res.header('Access-Control-Allow-Methods', config.get('server:access:methods'));
+            res.header('Access-Control-Allow-Headers', config.get('server:access:headers'));
             next();
         });
         context.use(bodyParser.json());
