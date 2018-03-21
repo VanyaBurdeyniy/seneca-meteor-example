@@ -86,8 +86,8 @@ class Application {
      * @param {Object|String} options Options for seneca instance 
      * @returns {Application} Refference to the instance of the Application
      */
-    addMicroservice(data) {
-        this._seneca.client(data);
+    addMicroservice(options) {
+        this._seneca.client(options);
         return this;
     }
 
