@@ -15,7 +15,7 @@ npm start
 ``` javascript
 {
     "server": {
-        "port": 3000
+        "port": 3000,
         "access": {
             "origin": "*",
             "methods": "GET, POST, OPTIONS, PUT, PATCH, DELETE",
