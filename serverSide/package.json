@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "node_modules/.bin/mocha test/unit/**/**.spec.js --exit",
+    "test": "npm run integrationTest",
+    "unitTest": "node_modules/.bin/mocha test/unit/**/**.spec.js --exit",
+    "integrationTest": "node_modules/.bin/mocha test/integration/**/**.spec.js  --timeout 10000 --exit",
     "lint": "eslint --fix --ext .js .",
     "doc": "npm run generate-doc && opn docs/index.html",
     "generate-doc": "rimraf docs && jsdoc --configure .jsdocrc"
@@ -25,6 +27,7 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "chai-http": "^3.0.0",
     "eslint": "^4.18.2",
     "eslint-config-prettier": "^2.9.0",
     "jsdoc": "^3.5.5",

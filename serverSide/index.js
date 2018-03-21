@@ -10,3 +10,5 @@ application.run()
     .catch(message => log.error(message));
 
 process.on('uncaughtException', message => log.error(message));
+
+module.exports = application;
