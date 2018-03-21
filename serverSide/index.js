@@ -5,8 +5,10 @@ global.log = require('./lib/services/log')(config.get('log:path'));
 
 const application = new Application(config);
 
-application.run()
-    .then(application => log.info(`Server listening on port ${application.port}`))
+application
+    .addMicroservice({ type: 'tcp', port: 10202, pin: 'role:user,cmd:*' })
+    .run()
+    .then(application => log.info(`Server listening on port ${application.getPort()}`))
     .catch(message => log.error(message));
 
 process.on('uncaughtException', message => log.error(message));

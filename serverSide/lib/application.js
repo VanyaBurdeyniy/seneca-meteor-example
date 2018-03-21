@@ -8,10 +8,9 @@ const bodyParser = require('body-parser');
 const seneca = require('seneca');
 const senecaWeb = require('seneca-web');
 const logger = require('seneca-legacy-logger');
-const adapter = require('seneca-web-adapter-express');
+const adapter = require('./adapter');
 
-const wrapActions = require('./utils/wrapActions');
-const { routes, actions } = require('./endpoints');
+const routes = require('./endpoints');
 
 /**
  * @classDesc The main enter point of application 
@@ -47,8 +46,8 @@ class Application {
          * @desc Options for configurating seneca-web module
          * @property {Express} context - The expless or express.Route instance
          * @property {Array} routes - Configured {@link routes}
-         * @property {Function} adapter - Module seneca-web-adapter-express - which 
-         * provides some additional configurations for express (context)
+         * @property {Function} adapter - Custom adapter for aggregating request data and 
+         * transform data from action to response
          * @property {Object} [options] - Additional options
          * @property {Boolean} [options.parseBody=true] - Whether parse body on not
          */
@@ -59,8 +58,19 @@ class Application {
             options: { parseBody: false },
         };
 
+        this._port = config.get('server:port');
 
-        this.port = config.get('server:port');
+        /**
+         * @prop _seneca
+         * @type {Object}
+         * @desc The instance of seneca module which provide all seneca sollutions 
+         * for use
+         * @property {Function} use - Allows to add plugins
+         * @property {Function} ready - Allows to run provided function for run it 
+         * after all plugins were added
+         */
+        this._seneca = seneca({ internal: { logger } })
+            .use(senecaWeb, this._senecaWebConfig);
     }
 
     /**
@@ -69,26 +79,31 @@ class Application {
      */
     run() {
         return new Promise((resolve) => {
-            /**
-             * @constant _seneca
-             * @type {Object}
-             * @desc The instance of seneca module which provide all seneca sollutions 
-             * for use
-             * @property {Function} use - Allows to add plugins
-             * @property {Function} ready - Allows to run provided function for run it 
-             * after all plugins were added
-             */
-            const _seneca = seneca({ internal: { logger } });
-
-            _seneca
-                .use(senecaWeb, this._senecaWebConfig)
-                .use(wrapActions.bind(_seneca), actions)
+            this._seneca
                 .ready(() => {
-                    _seneca
+                    this._seneca
                         .export('web/context')()
-                        .listen(this.port, () => resolve(this));
+                        .listen(this._port, () => resolve(this));
                 });
         });
+    }
+
+    /**
+     * @desc Add some microservice to an application
+     * @param {Object|String} options Options for seneca instance 
+     * @returns {Application} Refference to the instance of the Application
+     */
+    addMicroservice(options) {
+        this._seneca.client(options);
+        return this;
+    }
+
+    /**
+     * @desc Get port from the application
+     * @returns {Number|String} Port which the application listen to
+     */
+    getPort() {
+        return this._port;
     }
 }
 

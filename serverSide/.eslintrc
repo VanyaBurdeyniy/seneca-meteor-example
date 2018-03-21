@@ -14,6 +14,7 @@
         }
     },
     "globals": {
+        "Promise": true,
         "log": true
     },
     "rules": {
