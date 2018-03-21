@@ -1,4 +1,10 @@
-const routes = [
+/**
+ * @fileOverview The main file of endpoints. It aggregates all endpoints togather with
+ * different roles, wraps them and create seneca endpoints.
+ * @module endpoints
+ */
+
+module.exports = [
     {
         prefix: '/user',
         pin: 'role:user,cmd:*',
@@ -30,5 +36,3 @@ const routes = [
         },
     },
 ];
-
-module.exports = routes;

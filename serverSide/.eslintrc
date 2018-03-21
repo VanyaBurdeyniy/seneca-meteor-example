@@ -13,6 +13,10 @@
             "experimentalObjectRestSpread": true
         }
     },
+    "globals": {
+        "Promise": true,
+        "log": true
+    },
     "rules": {
         "no-empty-function": 1,
         "no-invalid-this": 1,

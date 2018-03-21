@@ -2,7 +2,6 @@
  * @fileOverview Wrapper for seneca actions
  * @module utils/wrapActions
  */
-/// <reference path="../actions.js" />
 
 const boom = require('boom');
 
@@ -14,12 +13,6 @@ const boom = require('boom');
  * @property  {Object} body - request body
  * @property  {Object} query - request query
  * @property  {Object} params - request params
- *
- * @typedef Response 
- * @type {Object}
- * @desc Response object from express
- * @method status 
- * @method set - set one header
  *
  * @typedef HandleResponse
  * @type {Object}
@@ -41,17 +34,17 @@ const boom = require('boom');
  */
 class HandleResponse {
     /** 
-     * @type {Response}
+     * @type {Object}
      * @desc Holds response object
      * @private 
      * @see Response
      */
 
     /**
-     * @param {Response} response - Response object from express
+     * @desc constructor
      */
-    constructor(response) {
-        this._response = response;
+    constructor() {
+        this._response = {};
     }
 
     /** 
@@ -65,11 +58,7 @@ class HandleResponse {
             throw new Error('Headers must be an object type');
         }
 
-        Object.keys(headers)
-            .forEach((header) => {
-                this._response
-                    .set(header, headers[header].toString());
-            });
+        this._response.headers = headers;
 
         return this;
     }
@@ -82,11 +71,33 @@ class HandleResponse {
      */
     setStatusCode(statusCode) {
         if (!statusCode || typeof statusCode !== 'number') {
-            throw new Error('statusCode must be a number type');
+            throw new Error('StatusCode must be a number type');
         }
 
-        this._response.status(statusCode);
+        this._response.statusCode = statusCode;
         return this;
+    }
+
+    /**
+     * @desc Set body to response
+     * @param {Object} body Body fo response
+     * @returns {HandleResponse} - the reference
+     */
+    setBody(body) {
+        this._response.body = body;
+        return this;
+    }
+
+    /**
+     * @desc Get response
+     * @returns {Object} response
+     */
+    getResponse() {
+        return {
+            statusCode: 200,
+            headers: {},
+            ...this._response,
+        };
     }
 }
 
@@ -94,26 +105,35 @@ class HandleResponse {
  * @desc The wrapper function for user's callback
  * @param {Function} userFunc  - the callback for user
  * @param {Object} args - related arguments 
- * @param {Response} response$ - response object from express
  * @returns {Primise.<Object>} - the object for response.json
  */
-async function wrapCallback(userFunc, args, response$) {
+async function wrapCallback(userFunc, args) {
+    const responseHandler = new HandleResponse();
     try {
-        const data = await userFunc(args, new HandleResponse(response$));
-        return data;
+        const data = await userFunc(args, responseHandler);
+        responseHandler
+            .setStatusCode(200)
+            .setBody(data);
+        return responseHandler.getResponse();
     } catch (error) {
+        // return boom result
         if (boom.isBoom(error)) {
-            response$.status(error.output.statusCode);
-            return error.output.payload;
+            responseHandler
+                .setStatusCode(error.output.statusCode)
+                .setBody(error.output.payload);
+            return responseHandler.getResponse();
         }
 
-        const statusCode = error.statusCode || 500;
-        response$.status(statusCode);
-        return {
-            statusCode: 500,
-            error: 'Internal Server Error',
-            message: error.message,
-        };
+        // otherwise return error data
+        responseHandler
+            .setStatusCode(error.statusCode || 500)
+            .setBody({
+                statusCode: 500,
+                error: 'Internal Server Error',
+                message: error.message,
+            });
+
+        return responseHandler.getResponse();
     }
 }
 
@@ -122,31 +142,18 @@ async function wrapCallback(userFunc, args, response$) {
  * <br>- gets a role, command and actionHandler
  * <br>- creates seneca action with the above role and command
  * <br>- wraps actionHandler in purpose to use ES6 and some ES7 standards
- * @param {SenecaObject} senecaInstance  The refference to the seneca instance
- * @param {ActionObject} actions  {@link Actions} 
+ * @param {Object} options  Options
+ * @param {String} options.role The specific role for seneca actions
+ * @param {Array} options.endpoints The specific role for seneca actions
  * @return {void}
  */
-module.exports = function (senecaInstance, actions) {
-    Object.entries(actions)
-        .forEach(([role, handlers]) => {
-            handlers.forEach(({ action: cmd, h: actionHandler }) => {
-                senecaInstance.add(
-                    { role, cmd },
-                    (
-                        {
-                            request$,
-                            response$,
-                            args,
-                        },
-                        callback
-                    ) => {
-                        wrapCallback(actionHandler, {
-                            ...args,
-                            headers: request$.headers,
-                            boom,
-                        }, response$)
-                            .then(callback, callback);
-                    });
+module.exports = function ({ role, endpoints }) {
+    endpoints.forEach(({ action: cmd, h: actionHandler }) => {
+        this.add(
+            { role, cmd },
+            ({ args }, callback) => {
+                wrapCallback(actionHandler, args)
+                    .then(callback, callback);
             });
-        });
+    });
 };
