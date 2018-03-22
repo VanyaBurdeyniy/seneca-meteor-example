@@ -1,0 +1,7 @@
+[
+    {
+        "script": "index.js",
+        "name": "web-api",
+        "instances": -1
+    }
+]

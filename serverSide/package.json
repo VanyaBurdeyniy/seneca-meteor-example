@@ -5,6 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "services": "pm2 start microservices/init.json",
+    "all": "pm2 start init.json && pm2 start microservices/init.json",
+    "stopall": "pm2 stop init.json && pm2 stop microservices/init.json",
     "test": "npm run integrationTest",
     "unitTest": "node_modules/.bin/mocha test/unit/**/**.spec.js --exit",
     "integrationTest": "node_modules/.bin/mocha test/integration/**/**.spec.js  --timeout 10000 --exit",
