@@ -6,7 +6,8 @@ Make your **config/config.json** file
 Run: 
 ``` bash
 npm i
-npm start
+npm i -g pm2
+pm2 start processes.json
 ```
 
 

@@ -1,0 +1,20 @@
+[
+    {
+        "script": "index.js",
+        "name": "web-api",
+        "exec_mode": "cluster",
+        "instances": -1
+    },
+    {
+        "script": "microservices/user/index.js",
+        "name": "user",
+        "exec_mode": "fork",
+        "watch": true,
+    },
+    {
+        "script": "microservices/circuit/index.js",
+        "name": "circuit",
+        "exec_mode": "fork",
+        "watch": true,
+    }
+]
