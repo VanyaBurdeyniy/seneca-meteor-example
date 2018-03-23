@@ -26,12 +26,13 @@ module.exports = [
         },
     },
     {
-        prefix: '/admin',
-        pin: 'role:admin,cmd:*',
+        prefix: '/circuit',
+        pin: 'role:circuit,cmd:*',
         map: {
-            login: {
-                POST: true,
+            getById: {
+                GET: true,
                 name: '',
+                suffix: '/:circuitId',
             },
         },
     },

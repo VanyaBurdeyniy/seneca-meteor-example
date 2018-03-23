@@ -1,0 +1,12 @@
+[
+    {
+        "script": "microservices/user/index.js",
+        "name": "user",
+        "watch": true
+    },
+    {
+        "script": "microservices/circuit/index.js",
+        "name": "circuit",
+        "watch": true
+    }
+]

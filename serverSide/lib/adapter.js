@@ -73,6 +73,7 @@ function handleRoute(seneca, request, response, route) {
         body,
         query,
         headers,
+        params,
         method,
     } = request;
 
@@ -82,6 +83,7 @@ function handleRoute(seneca, request, response, route) {
             query,
             headers,
             method,
+            params,
             route: cleanRoute(route),
             user: request.user || null,
         },

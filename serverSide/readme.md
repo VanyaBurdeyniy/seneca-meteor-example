@@ -6,7 +6,8 @@ Make your **config/config.json** file
 Run: 
 ``` bash
 npm i
-npm start
+npm i -g pm2
+npm run all
 ```
 
 
@@ -15,7 +16,7 @@ npm start
 ``` javascript
 {
     "server": {
-        "port": 3000
+        "port": 3000,
         "access": {
             "origin": "*",
             "methods": "GET, POST, OPTIONS, PUT, PATCH, DELETE",

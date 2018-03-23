@@ -27,7 +27,7 @@ const users = [
 module.exports = class User {
     /**
      * @desc Get all users from the db (in-memory)
-     * @param {RequestObject} data - Contain all data from response
+     * @param {RequestObject} data - Contain all data from request
      * @param {HandleResponse} [h] - optional parameter for adding some additional info
      * @return {Object} - response
      * @throws {Error|Boom}
@@ -43,7 +43,7 @@ module.exports = class User {
 
     /**
      * @desc Get user info by userId
-     * @param {RequestObject} data - Contain all data from response
+     * @param {RequestObject} data - Contain all data from request
      * @param {HandleResponse} [h] - optional parameter for adding some additional info
      * @return {Object} - response
      * @throws {Error|Boom}
@@ -69,7 +69,7 @@ module.exports = class User {
 
     /**
      * @desc Create a new user and add it to the users (in-memory db)
-     * @param {RequestObject} data - Contain all data from response
+     * @param {RequestObject} data - Contain all data from request
      * @param {HandleResponse} [h] - optional parameter for adding some additional info
      * @return {Object} - response
      * @throws {Error|Boom}

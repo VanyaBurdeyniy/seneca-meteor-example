@@ -26,19 +26,22 @@ class Application {
         this._config = config;
 
         /**
-         * @const context
+         * @prop context
          * @type {ExpressInstance}
          * @private
          */
-        const context = express();
+        this._app = express();
 
-        context.use((req, res, next) => {
+        this._app.use((req, res, next) => {
             res.header('Access-Control-Allow-Origin', config.get('server:access:origin'));
             res.header('Access-Control-Allow-Methods', config.get('server:access:methods'));
             res.header('Access-Control-Allow-Headers', config.get('server:access:headers'));
             next();
         });
-        context.use(bodyParser.json());
+        this._app.use(bodyParser.json());
+
+        const context = new express.Router();
+        this._app.use('/api/v1', context);
 
         /**
          * @const senecaWebConfig
@@ -79,12 +82,7 @@ class Application {
      */
     run() {
         return new Promise((resolve) => {
-            this._seneca
-                .ready(() => {
-                    this._seneca
-                        .export('web/context')()
-                        .listen(this._port, () => resolve(this));
-                });
+            this._app.listen(this._port, () => resolve(this));
         });
     }
 
